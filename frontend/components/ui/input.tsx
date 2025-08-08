@@ -1,0 +1,2 @@
+import * as React from "react"; import { clsx } from "clsx";
+export const Input=React.forwardRef<HTMLInputElement,React.InputHTMLAttributes<HTMLInputElement>>(({className,...props},ref)=>(<input ref={ref} className={clsx("w-full px-4 py-3 rounded-2xl border focus:outline-none",className)} {...props}/>)); Input.displayName="Input";

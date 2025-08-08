@@ -1,0 +1,3 @@
+approval_id,product_id,app_type,app_number,action_date,review_designation,doc_urls_json
+1,5,NDA,215999,2024-03-01,Priority,{}
+2,4,NDA,214123,2023-02-17,Standard,{}

@@ -1,0 +1,6 @@
+product_id,brand_name,generic_name,manufacturer,is_biologic,modality,route,chronic_use,us_approval_date,ta,ta_parent,original_indication,original_prev,entry_rank,has_expansions,expansions_list
+1,Iquivo,,,True,biologic,SC,True,2024-06-01,Immunology,Immunology,gMG,65000,2,True,—
+2,Rystiggo,,UCB,True,biologic,SC,True,2023-06-27,Immunology,Immunology,gMG,65000,2,True,CIDP
+3,Zilbrysq,,UCB,True,biologic,SC,True,2023-10-17,Immunology,Immunology,gMG,65000,2,False,—
+4,Filspari,,Travere,False,small_molecule,Oral,True,2023-02-17,Nephrology,CRM,IgA nephropathy,60000,1,False,—
+5,Opsynvi,,Actelion/J&J,False,small_molecule,Oral,True,2024-03-01,Cardio-Pulmonary,CRM,PAH,30000,2,False,—

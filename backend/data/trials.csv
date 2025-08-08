@@ -1,0 +1,3 @@
+trial_id,product_id,approval_id,nct_id,name,phase,design,population_key,sample_size,primary_completion_date,is_pivotal
+1,5,1,NCT00000000,Study 1,III,RCT,PAH adults,700,2023-11-30,True
+2,4,2,NCT11111111,Study 2,III,RCT,IgAN,450,2022-10-31,True

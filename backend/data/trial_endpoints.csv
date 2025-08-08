@@ -1,0 +1,3 @@
+trial_id,endpoint_type,endpoint_desc,statistical_method,effect_size,p_value,ci,success,source,source_url
+1,primary,6MWD change at Week 24,MMRM,+38.5 m,0.012,"(10.2, 66.8)",True,label,https://example/opsynvi/label#clinical
+2,primary,UPCR reduction at Week 36,ANCOVA,-35%,0.003,(-),True,label,https://example/filspari/label#clinical
