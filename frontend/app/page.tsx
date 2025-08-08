@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 
-// Use env var in Vercel; fall back to your live API
+// Read from Vercel env; fall back to your live API
 const BACKEND_URL =
   process.env.NEXT_PUBLIC_BACKEND_URL || "https://secretapi.nomaid.life";
 
@@ -14,46 +12,40 @@ type Candidate = {
   us_approval_year?: number;
   ta?: string;
   route?: string;
-  chronic_use?: boolean;
-  entry_rank?: number;
   score: number;
-  partials?: any;
-  pivotal_summary?: any;
 };
 
 export default function Page() {
-  const [q, setQ] = useState("");
-  const [data, setData] = useState<{ results?: Candidate[] } | null>(null);
+  const [query, setQuery] = useState("");
+  const [results, setResults] = useState<{ results?: Candidate[] } | null>(null);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
-  async function run() {
+  async function handleSearch() {
     setLoading(true);
     setErr(null);
-    setData(null);
+    setResults(null);
     try {
-      // Step 1: natural-language → structured search
-      const nl = await fetch(`${BACKEND_URL}/nl2search`, {
+      // 1) NL → structured
+      const nlRes = await fetch(`${BACKEND_URL}/nl2search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: q }),
-      }).then((r) => {
-        if (!r.ok) throw new Error(`nl2search ${r.status}`);
-        return r.json();
+        body: JSON.stringify({ query }),
       });
+      if (!nlRes.ok) throw new Error(`nl2search ${nlRes.status}`);
+      const { structured } = await nlRes.json();
 
-      // Step 2: search analogs with the structured payload
-      const res = await fetch(`${BACKEND_URL}/analogs/search`, {
+      // 2) structured → analogs
+      const analogRes = await fetch(`${BACKEND_URL}/analogs/search`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(nl.structured),
-      }).then((r) => {
-        if (!r.ok) throw new Error(`analogs/search ${r.status}`);
-        return r.json();
+        body: JSON.stringify(structured),
       });
-
-      setData(res);
+      if (!analogRes.ok) throw new Error(`analogs/search ${analogRes.status}`);
+      const data = await analogRes.json();
+      setResults(data);
     } catch (e: any) {
+      console.error(e);
       setErr(e?.message || "Search failed");
     } finally {
       setLoading(false);
@@ -63,21 +55,24 @@ export default function Page() {
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-4">
       <h1 className="text-2xl font-semibold">Analog Generator</h1>
-
-      {/* tiny debug note so we know which API the UI is calling */}
       <div className="text-xs text-gray-500">
         API: <code>{BACKEND_URL}</code>
       </div>
 
       <div className="flex gap-2">
-        <Input
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
           placeholder="Type a brand/generic/indication (e.g., PAH, Opsynvi, gMG)"
+          className="w-full px-4 py-3 rounded-2xl border focus:outline-none"
         />
-        <Button onClick={run} disabled={loading}>
+        <button
+          onClick={handleSearch}
+          disabled={loading}
+          className="inline-flex items-center justify-center rounded-2xl font-medium transition disabled:opacity-50 bg-black text-white hover:opacity-90 px-4 py-2 text-sm"
+        >
           {loading ? "Searching…" : "Search"}
-        </Button>
+        </button>
       </div>
 
       {err ? (
@@ -87,7 +82,7 @@ export default function Page() {
       ) : null}
 
       <div className="rounded-2xl border overflow-hidden">
-        {data?.results && data.results.length > 0 ? (
+        {results?.results && results.results.length > 0 ? (
           <table className="w-full text-sm">
             <thead>
               <tr>
@@ -99,7 +94,7 @@ export default function Page() {
               </tr>
             </thead>
             <tbody>
-              {data.results.map((r) => (
+              {results.results.map((r) => (
                 <tr key={`${r.brand_name}-${r.product_id ?? ""}`} className="border-t">
                   <td className="p-2">{r.brand_name}</td>
                   <td className="p-2">{r.us_approval_year ?? "—"}</td>
